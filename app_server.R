@@ -10,21 +10,30 @@ server <- function(input, output) {
   output$text <- renderText({input$txt})
   
   #Second Page
-  output$plotly <- renderPlotly({
-    plot_data <- country_unique <- unique(Top_CO2_coal_capita$country)
+  output$coal_plot <- renderPlotly({
+    top_countries <- c("Estonia", "Australia", "Kazakhstan", "South Africa", "Czechia")
+    top5_25years_coal_co2_percapita <- climate_data %>% 
+      filter(country %in% top_countries) %>%
+      group_by(country) %>%
+      arrange(desc(year)) %>%
+      slice(1:25)
+    country_new <- top5_25years_coal_co2_percapita %>% filter(country %in% input$countries ) %>% 
+      filter(year >= input$years[1],year <= input$years[2])
     
-    
-    coal_plot <- ggplot(top5_25years_coal_co2_percapita) + 
+    coal_plot <- ggplot(country_new) + 
       geom_line(aes(x = year, y = coal_co2_per_capita, color = country)) +
       labs( title = "The trend of CO2 emission due to coal consumption per capita from 1996-2020",
             x = "Year",
             y = "CO2 emitted by coal consumption per capita",
-            color = "country")
+            color = "country",
+            group = 1)
     
-    ggplotly(coal_plot)
+    coal_plot <- ggplotly(coal_plot)
+    
     
     return(coal_plot)
   })
   
   #Third Page
+  output$text <- renderText({input$txt})
 }

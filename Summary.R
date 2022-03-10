@@ -4,16 +4,14 @@ library(dplyr)
 climate_data <- read.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
 
 #Countries that have CO2 emission due to highest coal consumption per capita:
-Rank_CO2_coal_capita <- climate_data %>% 
+Top_CO2_coal_capita <- climate_data %>% 
   group_by(country) %>%
   arrange(desc(year)) %>%
   filter(year >= 1996 & year <= 2020) %>%
-  summarize(average_coal_co2_per_capita = mean(coal_co2_per_capita, na.rm =TRUE))
-
-Top_CO2_coal_capita <- Rank_CO2_coal_capita %>% 
+  summarize(average_coal_co2_per_capita = mean(coal_co2_per_capita, na.rm =TRUE)) %>% 
   arrange(desc(average_coal_co2_per_capita)) %>% 
-  slice(1:5)
-
+  slice(1:5)%>% 
+  select(country)
 
 
 #Country
@@ -28,19 +26,27 @@ year_for_range <- climate_data %>%
 year_range <- range(year_for_range$year)
 
 #Make a new data frame of CO2 emission due to coal consumption in most recent 25 years
-top5_25years_coal_co2_percapita <- climate_data %>% 
-  group_by(country) %>%
-  arrange(desc(year)) %>%
-  filter(year >= 1996 & year <= 2020)
+#top5_25years_coal_co2_percapita <- climate_data %>% 
+  #group_by(country) %>%
+  #arrange(desc(year)) %>%
+  #filter(year >= 1996 & year <= 2020)
 
 #Data frame for the plot
-top5_countries_df <- climate_data %>% filter(country %in% top5_countries)
-top5_25years_coal_co2_percapita <- top5_countries_df %>%
+
+top_countries <- c("Estonia", "Australia", "Kazakhstan", "South Africa", "Czechia")
+top5_25years_coal_co2_percapita <- climate_data %>% 
+  filter(country %in% top_countries) %>%
   group_by(country) %>%
   arrange(desc(year)) %>%
   slice(1:25)
 
 #maximum value&country
+Rank_CO2_coal_capita <- climate_data %>% 
+  group_by(country) %>%
+  arrange(desc(year)) %>%
+  filter(year >= 1996 & year <= 2020) %>%
+  summarize(average_coal_co2_per_capita = mean(coal_co2_per_capita, na.rm =TRUE))
+
 max_co2_per_capita <- Rank_CO2_coal_capita %>%
   filter(average_coal_co2_per_capita == max(average_coal_co2_per_capita, na.rm = TRUE))%>%
   pull(average_coal_co2_per_capita)
