@@ -40,6 +40,15 @@ top5_25years_coal_co2_percapita <- climate_data %>%
   arrange(desc(year)) %>%
   slice(1:25)
 
+avg_co2 <- top5_25years_coal_co2_percapita %>%  
+  summarize(average_co2_per_capita_topcountries = mean(coal_co2_per_capita, na.rm =TRUE))
+
+avg_co2_country <- avg_co2 %>% 
+  summarise(avg_top = mean(average_co2_per_capita_topcountries, na.rm =TRUE))%>% 
+  pull(avg_top)
+
+
+
 #maximum value&country
 Rank_CO2_coal_capita <- climate_data %>% 
   group_by(country) %>%
@@ -54,8 +63,6 @@ max_co2_per_capita <- Rank_CO2_coal_capita %>%
 max_co2_per_capita_country <-Rank_CO2_coal_capita %>%
   filter(average_coal_co2_per_capita == max(average_coal_co2_per_capita, na.rm = TRUE))%>%
   select(country)
-
-
 
 #Compare their trend in CO2 emission due to coal consumption in most recent 25 years
 coal_plot <- ggplot(top5_25years_coal_co2_percapita) + 

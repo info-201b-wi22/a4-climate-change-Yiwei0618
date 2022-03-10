@@ -23,6 +23,7 @@ Top_CO2_coal_capita <- climate_data %>%
   select(country)
 
 
+#top_countries <- c("Estonia, Australia, Kazakhstan, South Africa, and Czechia")
 
 #Country
 #country_unique <- unique(Top_CO2_coal_capita$country)
@@ -57,6 +58,16 @@ max_co2_per_capita <- Rank_CO2_coal_capita %>%
 max_co2_per_capita_country <-Rank_CO2_coal_capita %>%
   filter(average_coal_co2_per_capita == max(average_coal_co2_per_capita, na.rm = TRUE))%>%
   select(country)
+
+
+#Average for top5 countries
+avg_co2 <- top5_25years_coal_co2_percapita %>%  
+  summarize(average_co2_per_capita_topcountries = mean(coal_co2_per_capita, na.rm =TRUE))
+
+avg_co2_country <- avg_co2 %>% 
+  summarise(avg_top = mean(average_co2_per_capita_topcountries, na.rm =TRUE))%>% 
+  pull(avg_top)
+
 
 
 # ==========================
@@ -110,9 +121,9 @@ page_one <- tabPanel(
                   I will focus my exploring topic on the amount of CO2 emitted by coal consumption and the emission by different countries.
                   I chose to use the value of CO2 emission due to coal consumption per capita, 
                   and I think it will be more accurate to use the average emission rate per person since it can eliminate bias such as the size of the country. 
-                  I calculated the top 5 countries with the highest CO2 emission due to coal consumption per capita in the 25 years from ", year_range[1], " to " , year_range[2] , " and they are", Top_CO2_coal_capita,
-                  max_co2_per_capita_country, " has the highest emission value, which is ", max_co2_per_capita, " tonnes per person each year. 
-                  I compared the trend of the CO2 emission due to coal consumption per capita of these five countries from 1996-2020 using a line plot with interactive widgets."))
+                  I calculated the top 5 countries with the highest CO2 emission due to coal consumption per capita in the 25 years from ", year_range[1], " to " , year_range[2] , " and they are Estonia, Australia, Kazakhstan, South Africa, and Czechia " ,
+                  max_co2_per_capita_country, " has the highest emission value, which is ", max_co2_per_capita, " tonnes per person each year. The average CO2 emmision due to coal combustion among these five countries is " , avg_co2_country ,
+                  " tonnes per person each year.I compared the trend of the CO2 emission due to coal consumption per capita of these five countries from 1996-2020 using a line plot with interactive widgets."))
     )
   )
 )
@@ -157,7 +168,7 @@ page_three <- tabPanel(
 
 
 ui <- navbarPage(
-  theme = bs_theme(bootswatch = "minty"),
+  theme = bs_theme(bootswatch = "slate"),
   "Climate Change Project",
   page_one,
   page_two,
